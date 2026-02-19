@@ -87,5 +87,8 @@ Copy `backend/.env.example` to `backend/.env` and fill in:
 └── .gitignore
 ```
 
+## Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
 ## License
 Private — All rights reserved.

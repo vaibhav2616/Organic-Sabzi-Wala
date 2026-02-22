@@ -1,15 +1,15 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-me-in-prod')
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,14 +30,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # CORS
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.middleware.GlobalErrorHandlerMiddleware', # Custom Logger
+    'api.middleware.GlobalErrorHandlerMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -61,10 +62,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -83,14 +84,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -110,11 +112,10 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/hour',
         'user': '5000/hour',
-        'product_proxy': '60/minute', # Burst protection for Proxy View
+        'product_proxy': '60/minute',
     }
 }
 
-# Caching - using Local Memory for now (Upgrade to Redis for multi-node)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -122,33 +123,17 @@ CACHES = {
     }
 }
 
-# JWT Settings
 from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
-ALLOWED_HOSTS = ['*']
-
-# CORS: Allow local dev and network access (for phone testing)
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://192.168.28.120:5173",
-]
-# Also allow credentials for JWT auth from phone
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# WooCommerce API Keys (loaded from .env, never hardcode in source)
 WC_CONSUMER_KEY = os.environ.get('WC_CONSUMER_KEY', '')
 WC_CONSUMER_SECRET = os.environ.get('WC_CONSUMER_SECRET', '')
 WC_API_URL = os.environ.get('WC_API_URL', 'https://www.organicsabziwala.com/wp-json/wc/v3/')
 
-# Product/Order Backend: 'local' or 'woocommerce'
-# Set to 'woocommerce' in .env if WC API keys are configured
 PRODUCT_BACKEND = os.environ.get('PRODUCT_BACKEND', 'local')
-

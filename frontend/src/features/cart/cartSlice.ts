@@ -50,7 +50,7 @@ const initialState: CartState = {
 // Async Thunk: Fetch Cart from Backend
 export const fetchCart = createAsyncThunk(
     'cart/fetch',
-    async (_, { rejectWithValue }) => {
+    async (_) => {
         // MOCK: Backend cart fetch disabled for now (Guest Mode)
         // const response = await client.get('cart/');
         // return response.data; 

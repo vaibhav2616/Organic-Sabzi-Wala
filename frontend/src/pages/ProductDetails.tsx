@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ArrowLeft, Star, Heart, Share2, Leaf, Microscope, MapPin, CheckCircle2, ChevronRight, FileText, User } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User } from 'lucide-react';
 import { addToCartOptimistic, addToCartAPI } from '../features/cart/cartSlice';
 import type { RootState, AppDispatch } from '../features/store';
 import { toggleWishlist } from '../features/wishlist/wishlistSlice';

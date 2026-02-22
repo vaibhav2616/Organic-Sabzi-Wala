@@ -33,7 +33,7 @@ export const LocationModal = ({ isOpen, onClose }: LocationModalProps) => {
             <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center p-4 border-b">
                     <h2 className="text-lg font-bold">Select Location</h2>
-                    <button onClick={(e) => { e.stopPropagation(); onClose(); }}><X className="w-6 h-6 text-gray-500" /></button>
+                    <button onClick={() => onClose()}><X className="w-6 h-6 text-gray-500" /></button>
                 </div>
 
                 <div className="p-4">
@@ -67,7 +67,7 @@ export const LocationModal = ({ isOpen, onClose }: LocationModalProps) => {
                                             setZip('226001'); // Auto-fill Lucknow Zip
                                             checkZip('226001'); // Trigger Check
                                         },
-                                        (error) => alert('Location access denied or unavailable.')
+                                        (_error) => alert('Location access denied or unavailable.')
                                     );
                                 } else {
                                     alert('Geolocation is not supported by your browser.');

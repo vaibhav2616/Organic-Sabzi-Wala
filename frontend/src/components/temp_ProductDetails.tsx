@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, Minus, Plus, Share2, MapPin, Calendar, FileText, ChevronRight } from 'lucide-react';
 import { fetchProducts } from '../features/products/productsSlice';
 import { addToCartOptimistic } from '../features/cart/cartSlice';
-import { getProductPrice, getOriginalPrice, getProductImage, isOnSale as checkOnSale } from '../features/products/productsSlice';
+import { getProductPrice, getProductImage } from '../features/products/productsSlice';
 import type { AppDispatch, RootState } from '../features/store';
 
 const ProductDetails = () => {
@@ -20,7 +20,7 @@ const ProductDetails = () => {
     const cartItem = product ? cartItems.find(item => String(item.product.id) === String(product.id)) : null;
     const quantityInCart = cartItem ? cartItem.quantity : 0;
 
-    const [isAnimating, setIsAnimating] = useState(false);
+
 
     useEffect(() => {
         if (!product && !isLoading) {
@@ -32,8 +32,6 @@ const ProductDetails = () => {
     if (!product) return <div className="h-screen flex items-center justify-center">Product Not Found</div>;
 
     const price = getProductPrice(product);
-    const originalPrice = getOriginalPrice(product);
-    const onSale = checkOnSale(product);
     const imageSrc = getProductImage(product);
     const stock = product.stock_quantity || 0;
 
@@ -47,8 +45,6 @@ const ProductDetails = () => {
     };
 
     const handleUpdate = (qtyChange: number) => {
-        setIsAnimating(true);
-        setTimeout(() => setIsAnimating(false), 200);
         dispatch(addToCartOptimistic({ product: product as any, quantity: qtyChange }));
     };
 

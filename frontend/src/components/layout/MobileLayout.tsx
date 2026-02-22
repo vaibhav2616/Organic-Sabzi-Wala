@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, ShoppingBag, User, Leaf } from 'lucide-react';
+import { Menu, ShoppingBag, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BottomNav } from './BottomNav';
 import { SplashScreen } from '../common/SplashScreen';
@@ -33,7 +33,7 @@ export const MobileLayout = () => {
         return <SplashScreen onComplete={() => setShowSplash(false)} />;
     }
 
-    const isHomePage = location.pathname === '/';
+
 
     // Pages that manage their own header/layout (Immersive or Custom Header)
     const isCustomHeaderPage =

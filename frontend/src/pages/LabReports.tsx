@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, FlaskConical, FileCheck, Download, ChevronRight } from 'lucide-react';
+import { ArrowLeft, FlaskConical, FileCheck, Download } from 'lucide-react';
 import { BottomNav } from '../components/layout/BottomNav';
 
 const LabReportsPage = () => {

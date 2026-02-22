@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Truck, CheckCircle, Quote } from 'lucide-react';
+
+import { MapPin, Calendar, Truck, CheckCircle, Quote } from 'lucide-react';
 import { BottomNav } from '../components/layout/BottomNav';
 
 const TraceabilityPage = () => {
-    const navigate = useNavigate();
+
 
     // Mock Timeline
     const timeline = [

@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import client from '../api/client';
 import { ChevronLeft } from 'lucide-react';
-import { useDispatch } from 'react-redux';
-import { addToCartAPI } from '../features/cart/cartSlice';
+
+
 import { ProductCard } from '../components/common/ProductCard';
 
 const CategoryProducts = () => {
@@ -12,7 +12,7 @@ const CategoryProducts = () => {
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+
     const [title, setTitle] = useState('');
 
     useEffect(() => {

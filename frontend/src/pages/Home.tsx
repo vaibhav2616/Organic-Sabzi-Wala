@@ -2,8 +2,8 @@ import { ProductGrid } from '../components/common/ProductGrid';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '../components/home/HeroSection';
-import { FeaturesRow } from '../components/home/FeaturesRow';
-import toast from 'react-hot-toast';
+
+
 
 
 const Home = () => {
@@ -13,9 +13,7 @@ const Home = () => {
         window.scrollTo({ top: window.innerHeight * 0.8, behavior: 'smooth' });
     };
 
-    const handleRepeatOrder = () => {
-        toast.success("Feature coming soon! We'll remember your usuals.");
-    };
+
     return (
         <div className="pb-24 bg-[#Fdfbf7] dark:bg-gray-900 min-h-screen">
             {/* Header handled by MobileLayout now */}

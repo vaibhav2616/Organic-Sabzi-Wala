@@ -51,7 +51,7 @@ export const Sidebar = ({ isOpen, onClose, categories }: SidebarProps) => {
                             <FileText size={20} />
                             <span className="font-medium">Privacy Policy</span>
                         </button>
-                        <button onClick={() => handleNavigate('/contact')} className="flex items-center gap-3 w-full p-2 hover:bg-stone-50 rounded-lg text-organic-text">
+                        <button onClick={() => handleNavigate('/contact-us')} className="flex items-center gap-3 w-full p-2 hover:bg-stone-50 rounded-lg text-organic-text">
                             <Phone size={20} />
                             <span className="font-medium">Contact Us</span>
                         </button>

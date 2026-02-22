@@ -24,10 +24,13 @@ import Returns from './pages/Returns';
 
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 
+import { ScrollToTop } from './components/common/ScrollToTop';
+
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={
             <ErrorBoundary>

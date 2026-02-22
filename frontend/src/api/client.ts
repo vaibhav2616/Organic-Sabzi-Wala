@@ -3,7 +3,11 @@ import axios from 'axios';
 // Dynamic API URL: Automatically uses 'localhost' or valid Network IP based on where the user is visiting from.
 const getBaseURL = () => {
     const host = window.location.hostname;
-    return `http://${host}:8000/api/`;
+    if (host === 'localhost' || host.startsWith('192.168.')) {
+        return `http://${host}:8000/api/`;
+    }
+    // Production Fallback: User must provide Render URL via Vercel Env Vars
+    return '/api/';
 };
 
 const baseURL = import.meta.env.VITE_API_URL || getBaseURL();

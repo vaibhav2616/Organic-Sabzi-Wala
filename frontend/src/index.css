@@ -29,17 +29,43 @@
 .bg-organic {
   background-color: #fcfbf9;
   background-image: 
-    radial-gradient(#e5e7eb 1px, transparent 1px),
-    radial-gradient(#e5e7eb 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
+    radial-gradient(#e5e7eb 0.5px, transparent 0.5px),
+    radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
 }
 
 .dark .bg-organic {
-    background-color: #111827;
+    background-color: #0f172a;
     background-image: 
-      radial-gradient(#374151 1px, transparent 1px),
-      radial-gradient(#374151 1px, transparent 1px);
+      radial-gradient(#1e293b 1px, transparent 1px);
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+}
+
+.dark .glass {
+  @apply bg-gray-900/60 backdrop-blur-lg border border-white/10;
+}
+
+/* Premium Shadows */
+.shadow-premium {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+}
+
+/* Textures */
+.seed-texture {
+  position: relative;
+}
+.seed-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* Hide Scrollbar */

@@ -16,10 +16,8 @@ export const StickyHeader = () => {
             </button>
 
             {/* Center: Brand */}
-            <div className="flex items-center gap-2" onClick={() => navigate('/')}>
-                <div className="bg-organic-green p-1.5 rounded-full">
-                    <Leaf className="w-4 h-4 text-white fill-current" />
-                </div>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                <img src="/logo.png" alt="Logo" className="h-9 w-auto object-contain" />
                 <h1 className="text-lg font-outfit font-bold text-organic-text tracking-tight">
                     Organic Sabzi Wala
                 </h1>

@@ -62,7 +62,7 @@ export const MobileLayout = () => {
                         </button>
 
                         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                            <img src="/src/assets/logo.png" alt="Organic Sabzi Wala" className="h-14 w-auto object-contain" />
+                            <img src="/logo.png" alt="Organic Sabzi Wala" className="h-14 w-auto object-contain" />
                         </div>
 
                         <div className="flex items-center gap-1">

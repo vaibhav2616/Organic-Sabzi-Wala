@@ -6,7 +6,7 @@ const getBaseURL = () => {
     if (host === 'localhost' || host.startsWith('192.168.')) {
         return `http://${host}:8000/api/`;
     }
-    // Production Fallback: User must provide Render URL via Vercel Env Vars
+    // Production Fallback: Use relative URL by default, or provide absolute URL via VITE_API_URL
     return '/api/';
 };
 

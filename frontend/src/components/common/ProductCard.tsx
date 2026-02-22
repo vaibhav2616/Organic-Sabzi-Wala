@@ -125,8 +125,5 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                     )}
                 </div>
             </div>
-        </motion.div>
-    );
-};
-    );
+            );
 };

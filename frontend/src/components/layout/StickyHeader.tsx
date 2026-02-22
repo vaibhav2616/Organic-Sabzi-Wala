@@ -1,4 +1,4 @@
-import { Menu, User, Leaf } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // import { useDelivery } from '../../hooks/useDelivery'; // Location logic moved to specific flows or menu
 // import { LocationModal } from '../common/LocationModal'; // Temporarily disabled or moved

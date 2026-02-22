@@ -1,3 +1,8 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../../features/products/productsSlice';
+import { ProductCard } from './ProductCard';
+import type { AppDispatch, RootState } from '../../features/store';
 import { motion } from 'framer-motion';
 
 export const ProductGrid = () => {

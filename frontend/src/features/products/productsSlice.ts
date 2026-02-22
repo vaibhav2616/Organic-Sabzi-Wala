@@ -133,14 +133,15 @@ export const fetchProducts = createAsyncThunk(
             const response = await client.get('proxy/products/');
             if (Array.isArray(response.data)) {
                 return response.data;
-            } else if (response.data.success && Array.isArray(response.data.data)) {
+            } else if (response.data && response.data.success && Array.isArray(response.data.data)) {
                 return response.data.data;
             }
 
-            console.error("Unexpected API Response format:", response.data);
-            return rejectWithValue('Invalid API Response');
+            console.error("Unexpected API Response format (likely HTML):", response.data);
+            return rejectWithValue('Backend returned invalid data format');
         } catch (err: any) {
-            return rejectWithValue(err.response?.data?.message || 'Connection Error');
+            console.error("API Connection Error:", err);
+            return rejectWithValue(err.response?.data?.message || 'Connection Error: Check if Backend is Awake');
         }
     }
 );

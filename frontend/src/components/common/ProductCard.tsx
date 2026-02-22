@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+// Premium Product Card Component
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Plus, Minus, Sprout } from 'lucide-react';

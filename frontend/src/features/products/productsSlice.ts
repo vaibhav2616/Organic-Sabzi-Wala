@@ -70,9 +70,19 @@ export function getOriginalPrice(product: Product): number | null {
 
 // === Helper: Get product image URL ===
 export function getProductImage(product: Product): string {
-    if (product.image) return product.image;
-    if (product.images && product.images.length > 0) return product.images[0].src;
-    return '';
+    let imgPath = '';
+    if (product.image) imgPath = product.image;
+    else if (product.images && product.images.length > 0) imgPath = product.images[0].src;
+
+    if (!imgPath) return '';
+
+    // If it's a relative path, prepend the API base URL (excluding the /api/ suffix)
+    if (imgPath.startsWith('/')) {
+        const apiBase = client.defaults.baseURL?.replace('/api/', '') || '';
+        return `${apiBase}${imgPath}`;
+    }
+
+    return imgPath;
 }
 
 // === Helper: Check if product is on sale ===

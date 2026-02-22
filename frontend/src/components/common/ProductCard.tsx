@@ -20,7 +20,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     const cartItem = cartItems.find(item => String(item.product.id) === String(product.id));
     const quantityInCart = cartItem ? cartItem.quantity : 0;
 
-    const [isAnimating, setIsAnimating] = useState(false);
     const step = 1;
 
     const stockQuantity = product.stock_quantity ?? (product.is_active ? 100 : 0);
@@ -34,8 +33,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     const navigate = useNavigate();
 
     const handleUpdate = (qtyChange: number) => {
-        setIsAnimating(true);
-        setTimeout(() => setIsAnimating(false), 200);
         dispatch(addToCartOptimistic({ product: product as any, quantity: qtyChange }));
     };
 
@@ -125,5 +122,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                     )}
                 </div>
             </div>
-            );
+        </motion.div>
+    );
 };

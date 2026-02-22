@@ -14,6 +14,7 @@ const baseURL = import.meta.env.VITE_API_URL || getBaseURL();
 
 const client = axios.create({
     baseURL,
+    timeout: 30000, // 30s timeout for Render cold starts
     headers: {
         'Content-Type': 'application/json',
     },

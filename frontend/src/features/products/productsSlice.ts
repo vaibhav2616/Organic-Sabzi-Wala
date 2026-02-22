@@ -111,7 +111,7 @@ export const fetchProducts = createAsyncThunk(
         try {
             // Try v2 endpoint first (local DB)
             try {
-                const response = await client.get('v2/products/');
+                const response = await client.get('v2/products/', { timeout: 10000 });
                 const data = response.data;
                 // v2 uses StandardResponseRenderer: { success, data }
                 let products: Product[] = [];
@@ -120,17 +120,17 @@ export const fetchProducts = createAsyncThunk(
                 } else if (Array.isArray(data)) {
                     products = data;
                 }
-                // Only use v2 results if we actually got products
-                // (during transition, local DB may be empty)
+
                 if (products.length > 0) {
+                    console.log("Successfully fetched products from v2");
                     return products;
                 }
-            } catch {
-                // v2 endpoint not available, fall through to proxy
+            } catch (err) {
+                console.warn("v2 endpoint failed or timed out, trying proxy...", err);
             }
 
-            // Legacy: WooCommerce proxy (fallback when v2 is empty or unavailable)
-            const response = await client.get('proxy/products/');
+            // Legacy: WooCommerce proxy
+            const response = await client.get('proxy/products/', { timeout: 20000 });
             if (Array.isArray(response.data)) {
                 return response.data;
             } else if (response.data && response.data.success && Array.isArray(response.data.data)) {

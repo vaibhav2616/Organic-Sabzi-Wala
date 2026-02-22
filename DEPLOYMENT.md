@@ -13,8 +13,8 @@ We will deploy the Django backend first.
     - **Region**: Singapore or nearest to you.
     - **Branch**: `master` or `backend`
     - **Runtime**: `Python 3`
-    - **Build Command**: `pip install -r backend/requirements.txt`
-    - **Start Command**: `cd backend && gunicorn config.wsgi`
+    - **Build Command**: `pip install -r backend/requirements.txt && python backend/manage.py collectstatic --no-input`
+    - **Start Command**: `cd backend && gunicorn config.wsgi --timeout 120`
 5.  **Environment Variables** (Advanced -> Add Environment Variable):
     - `PYTHON_VERSION`: `3.11.0`
     - `DJANGO_SECRET_KEY`: (Generate a random string)

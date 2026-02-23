@@ -28,8 +28,21 @@ export const ProductGrid = () => {
     if (error) {
         return (
             <div className="p-10 text-center">
-                <p className="text-red-500 mb-2">Failed to load products</p>
-                <button onClick={() => dispatch(fetchProducts())} className="text-sm underline text-gray-600">Retry</button>
+                <p className="text-red-500 font-bold mb-2">Failed to load products</p>
+                <p className="text-xs text-stone-400 mb-4 bg-stone-50 p-2 rounded-lg inline-block border border-stone-100">
+                    Error Detail: {error}
+                </p>
+                <div className="flex flex-col gap-2">
+                    <button
+                        onClick={() => dispatch(fetchProducts())}
+                        className="text-sm font-bold text-organic-green underline"
+                    >
+                        Try Again
+                    </button>
+                    <p className="text-[10px] text-stone-400">
+                        Check if your Render Backend is active and Env Vars are set.
+                    </p>
+                </div>
             </div>
         );
     }

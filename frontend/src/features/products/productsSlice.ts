@@ -140,37 +140,9 @@ export const fetchProducts = createAsyncThunk(
             console.error("Unexpected API Response format (likely HTML):", response.data);
             return rejectWithValue('Backend returned invalid data format');
         } catch (err: any) {
-            console.error("API Connection Error:", err);
-
-            // EMERGENCY FALLBACK: If both v2 and proxy fail, return mock products so user sees the UI!
-            // Only do this in development/demo mode if the error isn't a simple 404
-            const mockProducts: Product[] = [
-                {
-                    id: 'fallback-1',
-                    name: "Fresh Organic Apple (Sample)",
-                    slug: "sample-apple",
-                    description: "High-quality organic apples from our sample farm.",
-                    base_price: 180,
-                    discounted_price: 150,
-                    is_organic: true,
-                    is_active: true,
-                    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?w=400&auto=format&fit=crop"
-                },
-                {
-                    id: 'fallback-2',
-                    name: "Green Spinach (Sample)",
-                    slug: "sample-spinach",
-                    description: "Nutrient-rich chemical-free spinach.",
-                    base_price: 40,
-                    is_organic: true,
-                    is_active: true,
-                    image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&auto=format&fit=crop"
-                }
-            ];
-
-            // Still report the error but provide the fallback if we want the user to at least see the grid
-            // For now, let's keep the error so we can debug, but log the fallback option.
-            return rejectWithValue(err.response?.data?.message || err.message || 'Connection Error: Check if Backend is Awake');
+            const msg = err.response?.data?.message || err.message || 'Connection Error: Check if Backend is Awake';
+            console.error("API Connection Error:", msg, err);
+            return rejectWithValue(msg);
         }
     }
 );

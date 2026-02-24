@@ -18,6 +18,7 @@ class ProductListAPIView(APIView):
     throttle_classes = [ProductProxyThrottle]
     renderer_classes = [StandardResponseRenderer]
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []  # Public endpoint — skip JWT validation
 
     def get(self, request):
         service = ProductService()
@@ -39,6 +40,7 @@ class ProductDetailAPIView(APIView):
     """Single product by slug or ID."""
     renderer_classes = [StandardResponseRenderer]
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []  # Public endpoint — skip JWT validation
 
     def get(self, request, identifier):
         service = ProductService()
@@ -55,6 +57,7 @@ class CategoryListAPIView(APIView):
     """List all product categories."""
     renderer_classes = [StandardResponseRenderer]
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []  # Public endpoint — skip JWT validation
 
     def get(self, request):
         service = ProductService()
@@ -69,6 +72,7 @@ class ProductProxyView(APIView):
     """
     throttle_classes = [ProductProxyThrottle]
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []  # Public endpoint — skip JWT validation
 
     def get(self, request):
         from django.conf import settings
@@ -109,6 +113,7 @@ class ProductListView(APIView):
     """
     renderer_classes = [StandardResponseRenderer]
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []  # Public endpoint — skip JWT validation
 
     def get(self, request):
         from .models import Product

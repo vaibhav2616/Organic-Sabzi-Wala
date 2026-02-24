@@ -23,10 +23,11 @@ const client = axios.create({
 // Interceptor for Auth (Future Proofing for Phase 4 integration)
 client.interceptors.request.use((config) => {
     const token = localStorage.getItem('access_token');
-    // Skip auth header for OTP endpoints to avoid 401s with stale tokens
+    // Skip auth header for: OTP endpoints, and public product/category endpoints
     const isAuthEndpoint = config.url?.includes('auth/otp/');
+    const isPublicEndpoint = config.url?.includes('/products') || config.url?.includes('/categories') || config.url?.includes('proxy/');
 
-    if (token && !isAuthEndpoint) {
+    if (token && !isAuthEndpoint && !isPublicEndpoint) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

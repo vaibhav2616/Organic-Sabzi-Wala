@@ -1,33 +1,40 @@
 import axios from 'axios';
 
-// Dynamic API URL: Automatically uses 'localhost' or valid Network IP based on where the user is visiting from.
+// Dynamic API URL: Automatically uses local dev or production Render URL
 const getBaseURL = () => {
+    // .env.production (Vercel build) has VITE_API_URL set to the Render URL
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL as string;
+    }
     const host = window.location.hostname;
-    if (host === 'localhost' || host.startsWith('192.168.')) {
+    if (host === 'localhost' || host.startsWith('192.168.') || host.startsWith('10.')) {
         return `http://${host}:8000/api/`;
     }
-    // Production Fallback: Use Vercel Proxy or Render directly if needed
-    return import.meta.env.VITE_API_URL || 'https://organic-sabzi-wala-api.onrender.com/api/';
+    // Production fallback (Vercel without env var)
+    return 'https://organic-sabzi-wala-api.onrender.com/api/';
 };
 
-const baseURL = import.meta.env.VITE_API_URL || getBaseURL();
+const baseURL = getBaseURL();
 
 const client = axios.create({
     baseURL,
-    timeout: 30000, // 30s timeout for Render cold starts
+    timeout: 90000, // 90s — Render free tier cold starts can take 60-90s
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Interceptor for Auth (Future Proofing for Phase 4 integration)
+// Interceptor for Auth
 client.interceptors.request.use((config) => {
     const token = localStorage.getItem('access_token');
-    // Skip auth header for: OTP endpoints, and public product/category endpoints
-    const isAuthEndpoint = config.url?.includes('auth/otp/');
-    const isPublicEndpoint = config.url?.includes('/products') || config.url?.includes('/categories') || config.url?.includes('proxy/');
+    // Skip auth header for public product/category endpoints
+    const isPublicEndpoint =
+        config.url?.includes('/products') ||
+        config.url?.includes('/categories') ||
+        config.url?.includes('proxy/') ||
+        config.url?.includes('auth/otp/');
 
-    if (token && !isAuthEndpoint && !isPublicEndpoint) {
+    if (token && !isPublicEndpoint) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

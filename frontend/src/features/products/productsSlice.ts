@@ -130,7 +130,7 @@ export const fetchProducts = createAsyncThunk(
             }
 
             // Legacy: WooCommerce proxy
-            const response = await client.get('proxy/products/', { timeout: 20000 });
+            const response = await client.get('proxy/products/', { timeout: 60000 });
             if (Array.isArray(response.data)) {
                 return response.data;
             } else if (response.data && response.data.success && Array.isArray(response.data.data)) {

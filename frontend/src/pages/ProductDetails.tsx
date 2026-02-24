@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User, ShoppingCart, Home, Grid } from 'lucide-react';
 import { addToCartOptimistic, addToCartAPI } from '../features/cart/cartSlice';
 import type { RootState, AppDispatch } from '../features/store';
 import { toggleWishlist } from '../features/wishlist/wishlistSlice';
@@ -17,6 +17,8 @@ const ProductDetails = () => {
     const cartItems = useSelector((state: RootState) => state.cart.items);
     const cartItem = cartItems.find(item => product && String(item.product.id) === String(product.id));
     const quantityInCart = cartItem ? cartItem.quantity : 0;
+    const totalCartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+
     const wishlistIds = useSelector((state: RootState) => state.wishlist.itemIds);
     const isWishlisted = product ? wishlistIds.some(id => String(id) === String(product.id)) : false;
 
@@ -27,15 +29,21 @@ const ProductDetails = () => {
     if (!product) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
     const images = product.images && product.images.length > 0 ? product.images.map(i => i.src) : [(product as any).image];
-    const price = parseFloat(product.price || product.regular_price || '60'); // Default to 60 as per image
+    const price = parseFloat(product.price || product.regular_price || '60');
 
-    const handleUpdate = (qty: number) => {
-        dispatch(addToCartOptimistic({ product: product, quantity: qty }));
-        dispatch(addToCartAPI({ product: product, quantity: qty }));
+    // FIX: send DELTA (+1 or -1), not absolute quantity
+    const handleAdd = () => {
+        dispatch(addToCartOptimistic({ product, quantity: 1 }));
+        dispatch(addToCartAPI({ product, quantity: 1 }));
+    };
+
+    const handleRemove = () => {
+        dispatch(addToCartOptimistic({ product, quantity: -1 }));
+        dispatch(addToCartAPI({ product, quantity: -1 }));
     };
 
     return (
-        <div className="min-h-screen bg-organic-cream dark:bg-gray-900 font-sans pb-24 relative">
+        <div className="min-h-screen bg-organic-cream dark:bg-gray-900 font-sans pb-40 relative">
             {/* Header Image Section */}
             <div className="relative h-[45vh] bg-stone-100 dark:bg-gray-800 rounded-b-[2.5rem] overflow-hidden shadow-sm">
                 {/* Navbar Overlay */}
@@ -131,31 +139,91 @@ const ProductDetails = () => {
                     </div>
                 </div>
 
-                <div className="h-20"></div> {/* Spacer */}
+                <div className="h-4"></div>
             </div>
 
-            {/* Bottom Floating Bar */}
-            <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-800 border-t border-stone-100 dark:border-gray-700 p-4 pb-8 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.05)] z-40">
-                <div className="flex items-center justify-between gap-4 max-w-md mx-auto">
-                    <div className="flex flex-col">
-                        <span className="text-xs text-stone-400 font-bold line-through">₹{parseFloat(product.regular_price || '0').toFixed(0)}</span>
-                        <span className="text-2xl font-serif font-bold text-organic-text dark:text-white">₹{price.toFixed(0)} <span className="text-sm font-sans text-stone-500 dark:text-gray-400 font-normal">/ kg</span></span>
-                    </div>
-
-                    {quantityInCart === 0 ? (
-                        <button
-                            onClick={() => handleUpdate(1)}
-                            className="flex-1 bg-organic-green text-white py-3.5 rounded-full font-bold text-sm shadow-xl shadow-green-200 dark:shadow-none flex items-center justify-center gap-2 hover:bg-green-800 transition-colors"
-                        >
-                            Add to Cart <ChevronRight size={18} />
-                        </button>
-                    ) : (
-                        <div className="flex-1 flex items-center justify-between bg-stone-100 dark:bg-gray-700 rounded-full p-1">
-                            <button onClick={() => handleUpdate(quantityInCart - 1)} className="w-10 h-10 bg-white dark:bg-gray-600 rounded-full flex items-center justify-center shadow-sm font-bold text-lg text-organic-text dark:text-white">-</button>
-                            <span className="font-bold text-lg dark:text-white">{quantityInCart}</span>
-                            <button onClick={() => handleUpdate(quantityInCart + 1)} className="w-10 h-10 bg-organic-green text-white rounded-full flex items-center justify-center shadow-md font-bold text-lg">+</button>
+            {/* ───── BOTTOM SECTION: Add to Cart BAR ───── */}
+            <div className="fixed bottom-0 left-0 w-full z-50">
+                {/* Cart Control Bar */}
+                <div className="bg-white dark:bg-gray-800 border-t border-stone-100 dark:border-gray-700 px-4 pt-4 pb-2 shadow-[0_-5px_20px_rgba(0,0,0,0.06)]">
+                    <div className="flex items-center justify-between gap-4 max-w-md mx-auto">
+                        {/* Price */}
+                        <div className="flex flex-col">
+                            {product.regular_price && parseFloat(product.regular_price) > price && (
+                                <span className="text-xs text-stone-400 font-bold line-through">₹{parseFloat(product.regular_price).toFixed(0)}</span>
+                            )}
+                            <span className="text-2xl font-serif font-bold text-organic-text dark:text-white">
+                                ₹{price.toFixed(0)} <span className="text-sm font-sans text-stone-500 dark:text-gray-400 font-normal">/ kg</span>
+                            </span>
                         </div>
-                    )}
+
+                        {/* Add / Quantity control */}
+                        {quantityInCart === 0 ? (
+                            <button
+                                onClick={handleAdd}
+                                className="flex-1 bg-organic-green text-white py-3.5 rounded-full font-bold text-sm shadow-xl shadow-green-200 dark:shadow-none flex items-center justify-center gap-2 hover:bg-green-800 active:scale-95 transition-all"
+                            >
+                                Add to Cart <ChevronRight size={18} />
+                            </button>
+                        ) : (
+                            <div className="flex-1 flex items-center justify-between bg-stone-100 dark:bg-gray-700 rounded-full p-1">
+                                <button
+                                    onClick={handleRemove}
+                                    className="w-10 h-10 bg-white dark:bg-gray-600 rounded-full flex items-center justify-center shadow-sm font-bold text-lg text-organic-text dark:text-white active:scale-90 transition-transform"
+                                >
+                                    −
+                                </button>
+                                <span className="font-bold text-lg dark:text-white">{quantityInCart}</span>
+                                <button
+                                    onClick={handleAdd}
+                                    className="w-10 h-10 bg-organic-green text-white rounded-full flex items-center justify-center shadow-md font-bold text-lg active:scale-90 transition-transform"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Go to Cart button */}
+                        {quantityInCart > 0 && (
+                            <button
+                                onClick={() => navigate('/cart')}
+                                className="relative bg-organic-green text-white p-3 rounded-full shadow-lg"
+                            >
+                                <ShoppingCart size={20} />
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4.5 h-4.5 min-w-[18px] min-h-[18px] rounded-full flex items-center justify-center">
+                                    {totalCartCount}
+                                </span>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mini Navigation Bar (replaces BottomNav since it's hidden on product pages) */}
+                <div className="bg-[#0f2819] flex justify-around items-center h-14 px-2">
+                    <button onClick={() => navigate('/')} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-white transition-colors">
+                        <Home size={20} strokeWidth={1.5} />
+                        <span className="text-[9px] font-medium">Home</span>
+                    </button>
+                    <button onClick={() => navigate('/categories')} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-white transition-colors">
+                        <Grid size={20} strokeWidth={1.5} />
+                        <span className="text-[9px] font-medium">Categories</span>
+                    </button>
+                    <button
+                        onClick={() => navigate('/cart')}
+                        className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-white transition-colors relative"
+                    >
+                        <ShoppingCart size={20} strokeWidth={1.5} />
+                        {totalCartCount > 0 && (
+                            <span className="absolute -top-1 right-1 bg-red-500 text-white text-[9px] font-bold min-w-[14px] h-[14px] rounded-full flex items-center justify-center px-0.5">
+                                {totalCartCount}
+                            </span>
+                        )}
+                        <span className="text-[9px] font-medium">Cart</span>
+                    </button>
+                    <button onClick={() => navigate('/account')} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-white transition-colors">
+                        <User size={20} strokeWidth={1.5} />
+                        <span className="text-[9px] font-medium">Account</span>
+                    </button>
                 </div>
             </div>
         </div>

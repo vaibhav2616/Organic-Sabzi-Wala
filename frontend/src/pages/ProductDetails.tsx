@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User, ShoppingCart, Home, Grid } from 'lucide-react';
 import { addToCartOptimistic, addToCartAPI } from '../features/cart/cartSlice';
+import { getProductImage } from '../features/products/productsSlice';
 import type { RootState, AppDispatch } from '../features/store';
 import { toggleWishlist } from '../features/wishlist/wishlistSlice';
 
@@ -28,7 +29,7 @@ const ProductDetails = () => {
 
     if (!product) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
-    const images = product.images && product.images.length > 0 ? product.images.map(i => i.src) : [(product as any).image];
+    const imageSrc = getProductImage(product);
     const price = parseFloat(product.price || product.regular_price || '60');
 
     // FIX: send DELTA (+1 or -1), not absolute quantity
@@ -73,7 +74,13 @@ const ProductDetails = () => {
 
                 {/* Main Image */}
                 <div className="w-full h-full flex items-center justify-center p-8 relative pt-20">
-                    <img src={images[0]} alt={product.name} className="w-full h-full object-contain drop-shadow-xl" />
+                    {imageSrc ? (
+                        <img src={imageSrc} alt={product.name} className="w-full h-full object-contain drop-shadow-xl mix-blend-multiply dark:mix-blend-normal" />
+                    ) : (
+                        <div className="w-32 h-32 bg-stone-200 rounded-3xl flex items-center justify-center">
+                            <Leaf size={40} className="text-stone-400" />
+                        </div>
+                    )}
                     {/* 100% Organic Badge Overlay */}
                     <div className="absolute top-28 left-6 bg-organic-green text-white w-16 h-16 rounded-full flex flex-col items-center justify-center font-serif leading-none shadow-lg rotate-[-10deg] border-2 border-white/30">
                         <span className="text-sm font-bold">100%</span>

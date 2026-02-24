@@ -1,122 +1,118 @@
-// Premium Product Card Component
+// Premium Product Card Component — Compact Design
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Plus, Minus, Sprout } from 'lucide-react';
 import { addToCartOptimistic } from '../../features/cart/cartSlice';
 import { type Product, getProductPrice, getOriginalPrice, getProductImage, isOnSale as checkOnSale } from '../../features/products/productsSlice';
 import type { AppDispatch, RootState } from '../../features/store';
+import { motion } from 'framer-motion';
 
 interface ProductCardProps {
     product: Product;
 }
 
-import { motion } from 'framer-motion';
-
 export const ProductCard = ({ product }: ProductCardProps) => {
     if (!product) return null;
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const cartItems = useSelector((state: RootState) => state.cart.items);
 
     const cartItem = cartItems.find(item => String(item.product.id) === String(product.id));
     const quantityInCart = cartItem ? cartItem.quantity : 0;
 
-    const step = 1;
-
     const stockQuantity = product.stock_quantity ?? (product.is_active ? 100 : 0);
-    const displayStock = stockQuantity;
-
     const price = getProductPrice(product);
     const originalPrice = getOriginalPrice(product);
     const onSale = checkOnSale(product);
     const imageSrc = getProductImage(product) || null;
 
-    const navigate = useNavigate();
-
-    const handleUpdate = (qtyChange: number) => {
-        dispatch(addToCartOptimistic({ product: product as any, quantity: qtyChange }));
+    const handleAdd = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        dispatch(addToCartOptimistic({ product: product as any, quantity: 1 }));
+    };
+    const handleRemove = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        dispatch(addToCartOptimistic({ product: product as any, quantity: -1 }));
     };
 
     return (
         <motion.div
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="group relative bg-white dark:bg-gray-800 border border-stone-100 dark:border-gray-700 p-3 rounded-2xl shadow-premium flex flex-col justify-between h-auto min-h-[16rem] transition-all duration-300 hover:shadow-xl cursor-pointer aspect-[3/5] seed-texture"
+            whileHover={{ y: -3, boxShadow: '0 12px 28px rgba(0,0,0,0.10)' }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="group relative bg-white dark:bg-gray-800 border border-stone-100 dark:border-gray-700 rounded-2xl overflow-hidden shadow-sm cursor-pointer"
             onClick={() => navigate(`/product/${product.slug || product.id}`)}
         >
-            {/* Badges */}
-            <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
-                {displayStock === 0 ? (
-                    <span className="glass text-red-600 dark:text-red-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-red-100 dark:border-red-800/50">
-                        Out of Stock
-                    </span>
-                ) : (
-                    <span className="glass text-organic-green dark:text-green-400 text-[10px] font-bold px-2.5 py-1 rounded-full border border-organic-green/20 flex items-center gap-1.5 shadow-sm">
-                        <Sprout size={11} className="animate-pulse" /> ORGANIC
-                    </span>
-                )}
-            </div>
+            {/* Image Section — fixed height */}
+            <div className="relative h-32 sm:h-36 bg-stone-50 dark:bg-gray-700/40 flex items-center justify-center overflow-hidden">
+                {/* ORGANIC badge */}
+                <div className="absolute top-2 left-2 z-10">
+                    {stockQuantity === 0 ? (
+                        <span className="bg-red-100 text-red-600 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            Out of Stock
+                        </span>
+                    ) : (
+                        <span className="bg-organic-green/10 text-organic-green text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-organic-green/20">
+                            <Sprout size={9} /> ORGANIC
+                        </span>
+                    )}
+                </div>
 
-            {/* Image area */}
-            <div className="h-36 w-full mb-3 flex items-center justify-center relative rounded-xl overflow-hidden bg-stone-50/50 dark:bg-gray-700/20">
+                {/* Sale badge */}
+                {onSale && (
+                    <div className="absolute top-2 right-2 z-10 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        SALE
+                    </div>
+                )}
+
                 {imageSrc ? (
-                    <motion.img
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
+                    <img
                         src={imageSrc}
                         alt={product.name}
                         loading="lazy"
-                        className="h-full w-full object-contain p-2 group-hover:scale-110 transition-transform duration-700 ease-out mix-blend-multiply dark:mix-blend-normal"
+                        className="h-full w-full object-contain p-3 group-hover:scale-105 transition-transform duration-500 ease-out mix-blend-multiply dark:mix-blend-normal"
                     />
                 ) : (
-                    <div className="bg-stone-100 dark:bg-gray-700 w-full h-full flex items-center justify-center">
-                        <span className="text-gray-300 text-xs italic">Coming Soon</span>
-                    </div>
+                    <div className="text-gray-300 text-xs italic text-center px-2">No Image</div>
                 )}
             </div>
 
-            {/* Content */}
-            <div className="flex flex-col flex-1 justify-between px-1">
-                <div>
-                    <h3 className="text-sm font-bold text-organic-text dark:text-gray-100 font-serif leading-tight mb-1 line-clamp-2 min-h-[2.5rem]">
-                        {product.name}
-                    </h3>
-                    <p className="text-[10px] text-stone-400 dark:text-gray-500 font-bold tracking-wider uppercase">
-                        {displayStock > 0 ? 'FARM FRESH' : 'NOT IN SEASON'}
-                    </p>
-                </div>
+            {/* Info Section */}
+            <div className="px-3 pt-2 pb-3">
+                <h3 className="text-[13px] font-bold text-organic-text dark:text-gray-100 font-serif leading-tight line-clamp-2 mb-1">
+                    {product.name}
+                </h3>
 
-                <div className="flex justify-between items-end mt-4" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex flex-col">
-                        <span className="font-bold text-lg text-organic-text dark:text-gray-100">₹{price.toFixed(0)}</span>
+                {/* Price + Add button row */}
+                <div className="flex items-center justify-between mt-2" onClick={e => e.stopPropagation()}>
+                    <div className="flex flex-col min-w-0">
+                        <span className="font-bold text-base text-organic-text dark:text-gray-100 leading-none">₹{price.toFixed(0)}</span>
                         {onSale && originalPrice && (
-                            <span className="text-[10px] text-stone-400 dark:text-gray-500 line-through">₹{originalPrice.toFixed(0)}</span>
+                            <span className="text-[10px] text-stone-400 line-through">₹{originalPrice.toFixed(0)}</span>
                         )}
                     </div>
 
-                    {/* Add Button */}
-                    {displayStock > 0 ? (
+                    {stockQuantity > 0 ? (
                         quantityInCart > 0 ? (
-                            <div className="flex items-center gap-2 bg-organic-green text-white rounded-lg p-1 shadow-md">
-                                <motion.button whileTap={{ scale: 0.8 }} onClick={() => handleUpdate(-step)} className="p-1 hover:bg-white/20 rounded transition-colors">
-                                    <Minus size={14} />
+                            <div className="flex items-center gap-1.5 bg-organic-green rounded-xl px-1.5 py-1 shadow-sm">
+                                <motion.button whileTap={{ scale: 0.75 }} onClick={handleRemove} className="w-6 h-6 flex items-center justify-center text-white">
+                                    <Minus size={12} />
                                 </motion.button>
-                                <span className="text-xs font-bold min-w-[14px] text-center">{quantityInCart}</span>
-                                <motion.button whileTap={{ scale: 0.8 }} onClick={() => handleUpdate(step)} className="p-1 hover:bg-white/20 rounded transition-colors" disabled={quantityInCart >= displayStock}>
-                                    <Plus size={14} />
+                                <span className="text-white text-xs font-bold min-w-[14px] text-center">{quantityInCart}</span>
+                                <motion.button whileTap={{ scale: 0.75 }} onClick={handleAdd} className="w-6 h-6 flex items-center justify-center text-white">
+                                    <Plus size={12} />
                                 </motion.button>
                             </div>
                         ) : (
                             <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => handleUpdate(step)}
-                                className="bg-organic-green text-white dark:bg-green-700 px-5 py-2.5 rounded-xl text-xs font-black transition-all shadow-md hover:bg-green-600 active:shadow-inner tracking-widest"
+                                whileTap={{ scale: 0.9 }}
+                                onClick={handleAdd}
+                                className="bg-organic-green text-white rounded-xl px-4 py-2 text-[11px] font-black tracking-widest shadow-sm hover:bg-green-700 active:shadow-inner transition-colors"
                             >
                                 ADD
                             </motion.button>
                         )
                     ) : (
-                        <button disabled className="bg-stone-50 dark:bg-gray-800 text-stone-300 dark:text-gray-700 px-3 py-2 rounded-xl text-xs font-bold cursor-not-allowed border border-stone-100 dark:border-gray-700">
+                        <button disabled className="bg-stone-100 dark:bg-gray-700 text-stone-300 dark:text-gray-600 px-3 py-1.5 rounded-xl text-[10px] font-bold cursor-not-allowed">
                             OUT
                         </button>
                     )}

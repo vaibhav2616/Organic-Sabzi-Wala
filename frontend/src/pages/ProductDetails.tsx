@@ -1,11 +1,26 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User, ShoppingCart, Home, Grid } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Leaf, MapPin, CheckCircle2, ChevronRight, FileText, User, ShoppingCart, Home, Grid, Star } from 'lucide-react';
 import { addToCartOptimistic, addToCartAPI } from '../features/cart/cartSlice';
 import { getProductImage } from '../features/products/productsSlice';
 import type { RootState, AppDispatch } from '../features/store';
 import { toggleWishlist } from '../features/wishlist/wishlistSlice';
+import { ProductCard } from '../components/common/ProductCard';
+
+const REVIEWS = [
+    { id: 1, name: 'Priya S.', rating: 5, date: '2 days ago', text: 'Absolutely fresh! You can tell it was harvested recently. The quality is unmatched compared to local market.', verified: true },
+    { id: 2, name: 'Rahul M.', rating: 4, date: '1 week ago', text: 'Great product, delivered on time. Slightly smaller portions than expected but the taste is amazing.', verified: true },
+    { id: 3, name: 'Ananya K.', rating: 5, date: '2 weeks ago', text: 'Love the traceability feature — knowing exactly which farm this comes from gives so much confidence. Will order again!', verified: false },
+];
+
+const StarRating = ({ rating }: { rating: number }) => (
+    <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map(s => (
+            <Star key={s} size={13} className={s <= rating ? 'fill-amber-400 text-amber-400' : 'text-stone-300 dark:text-gray-600'} />
+        ))}
+    </div>
+);
 
 const ProductDetails = () => {
     const { slug } = useParams();
@@ -28,6 +43,12 @@ const ProductDetails = () => {
     }, [slug]);
 
     if (!product) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+
+    // Suggested products: same category, exclude current
+    const suggestedProducts = products
+        .filter(p => p.id !== product.id && (p.category === product.category || (p as any).category_id === (product as any).category_id))
+        .slice(0, 6);
+    const displaySuggested = suggestedProducts.length >= 2 ? suggestedProducts : products.filter(p => p.id !== product.id).slice(0, 6);
 
     const imageSrc = getProductImage(product);
     const price = parseFloat(product.price || product.regular_price || '60');
@@ -146,7 +167,63 @@ const ProductDetails = () => {
                     </div>
                 </div>
 
+                {/* ─── Suggested Products ─── */}
+                {displaySuggested.length > 0 && (
+                    <div className="mb-6">
+                        <h2 className="text-lg font-serif font-bold text-organic-text dark:text-gray-100 mb-3">
+                            🛒 You Might Also Like
+                        </h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            {displaySuggested.map(p => (
+                                <ProductCard key={p.id} product={p} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ─── Reviews Section ─── */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-lg font-serif font-bold text-organic-text dark:text-gray-100">⭐ Customer Reviews</h2>
+                        <div className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-700">
+                            <Star size={13} className="fill-amber-400 text-amber-400" />
+                            <span className="text-sm font-bold text-amber-700 dark:text-amber-300">4.7</span>
+                            <span className="text-xs text-stone-400 dark:text-gray-500">(128)</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        {REVIEWS.map(review => (
+                            <div key={review.id} className="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-stone-100 dark:border-gray-700 shadow-sm">
+                                <div className="flex items-start justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-organic-green to-green-700 flex items-center justify-center text-white text-xs font-bold">
+                                            {review.name[0]}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-sm font-bold text-organic-text dark:text-gray-100">{review.name}</span>
+                                                {review.verified && (
+                                                    <span className="text-[9px] bg-green-100 dark:bg-green-900/30 text-organic-green dark:text-green-400 font-bold px-1.5 py-0.5 rounded-full">✓ Verified</span>
+                                                )}
+                                            </div>
+                                            <StarRating rating={review.rating} />
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] text-stone-400 dark:text-gray-500">{review.date}</span>
+                                </div>
+                                <p className="text-sm text-stone-600 dark:text-gray-400 leading-relaxed">{review.text}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button className="w-full mt-3 py-3 border border-stone-200 dark:border-gray-700 rounded-2xl text-sm font-bold text-stone-500 dark:text-gray-400 hover:bg-stone-50 dark:hover:bg-gray-800 transition-colors">
+                        See All 128 Reviews
+                    </button>
+                </div>
+
                 <div className="h-4"></div>
+
             </div>
 
             {/* ───── BOTTOM SECTION: Add to Cart BAR ───── */}

@@ -52,11 +52,11 @@ export const MobileLayout = () => {
             />
 
             {!isCustomHeaderPage && (
-                <header className="fixed top-0 left-0 right-0 z-40 bg-white text-stone-900 shadow-sm border-b border-stone-100 transition-all duration-300">
+                <header className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 text-stone-900 dark:text-white shadow-sm border-b border-stone-100 dark:border-gray-800 transition-all duration-300">
                     <div className="flex items-center justify-between px-4 h-14">
                         <button
                             onClick={() => setIsSidebarOpen(true)}
-                            className="p-2 rounded-full hover:bg-stone-100 text-stone-600 transition-colors"
+                            className="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-gray-800 text-stone-600 dark:text-gray-300 transition-colors"
                         >
                             <Menu size={24} />
                         </button>
@@ -68,13 +68,13 @@ export const MobileLayout = () => {
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={() => navigate('/account')}
-                                className="p-2 rounded-full hover:bg-stone-100 text-stone-600 transition-colors"
+                                className="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-gray-800 text-stone-600 dark:text-gray-300 transition-colors"
                             >
                                 <User size={24} />
                             </button>
                             <button
                                 onClick={() => navigate('/cart')}
-                                className="p-2 rounded-full relative hover:bg-stone-100 text-stone-600 transition-colors"
+                                className="p-2 rounded-full relative hover:bg-stone-100 dark:hover:bg-gray-800 text-stone-600 dark:text-gray-300 transition-colors"
                             >
                                 <ShoppingBag size={24} />
                                 {cartItemCount > 0 && (
@@ -87,6 +87,7 @@ export const MobileLayout = () => {
                     </div>
                 </header>
             )}
+
 
             {/* Main Content */}
             <main className={`${isCustomHeaderPage ? 'pt-0' : 'pt-14'} pb-20 min-h-screen`}>
